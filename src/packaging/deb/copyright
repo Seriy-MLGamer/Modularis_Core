@@ -1,0 +1,21 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: libmodularis
+Upstream-Contact: Серый MLGamer <Seriy-MLGamer@yandex.ru>
+Source: https://github.com/Seriy-MLGamer/Modularis_Core
+
+Files: *
+Copyright: 2022-2023 Серый MLGamer <Seriy-MLGamer@yandex.ru>
+License: GPL-3+
+
+Files: README.md, README en_US.md
+Copyright: 2022-2023 Серый MLGamer <Seriy-MLGamer@yandex.ru>
+License: CC-BY-SA-4
+
+License: GPL-3+
+ Modularis Core is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ Modularis Core is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License along with Modularis Core. If not, see <https://www.gnu.org/licenses/>.
+ On Debian systems, the full text of the GNU General Public License version 3 can be found in the file "/usr/share/common-licenses/GPL-3".
+License: CC-BY-SA-4
+ This file is free documentation: you can redistribute it and/or modify it under the terms of the Creative Commons Attribution-ShareAlike 4.0 International license: <https://creativecommons.org/licenses/by-sa/4.0/>.
+ This file is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the license for more details.

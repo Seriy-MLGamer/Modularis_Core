@@ -1,0 +1,4 @@
+#!/bin/bash
+
+g++ -omodularis-test main.cpp -O -s -Iinclude -lmodularis -lSDL2
+./modularis-test

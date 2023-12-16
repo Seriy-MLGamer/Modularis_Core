@@ -1,0 +1,15 @@
+out
+test/modularis-test
+*.o
+*.a
+*.so
+*.so.*
+*.out
+*.exe
+*.dll
+*.deb
+*.rpm
+*.tar
+*.gz
+*.zip
+*.wav

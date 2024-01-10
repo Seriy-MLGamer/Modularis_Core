@@ -1,4 +1,4 @@
-#(C) 2023 Серый MLGamer. All freedoms preserved.
+#(C) 2023-2024 Серый MLGamer. All freedoms preserved.
 #Дзен: <https://dzen.ru/seriy_mlgamer>
 #SoundCloud: <https://soundcloud.com/seriy_mlgamer>
 #YouTube: <https://www.youtube.com/@Seriy_MLGamer>
@@ -65,7 +65,7 @@ endif()
 
 project(Modularis_Core
 	HOMEPAGE_URL https://github.com/Seriy-MLGamer/Modularis_Core
-	LANGUAGES CXX
+	LANGUAGES C CXX
 )
 
 if(BUILD_TARGET STREQUAL host)
@@ -126,11 +126,11 @@ endif()
 set(CMAKE_INSTALL_DOCDIR share/doc)
 
 set(CPACK_PACKAGE_NAME libmodularis)
-set(CPACK_PACKAGE_VERSION 0.0.0pre-alpha-raw-undone)
+set(CPACK_PACKAGE_VERSION 0.0.0pre-alpha-raw)
 set(CPACK_PACKAGE_VENDOR "Серый MLGamer <Seriy-MLGamer@yandex.ru>")
 set(CPACK_RESOURCE_FILE_LICENSE ../COPYING.md)
 set(DESCRIPTION_SUMMARY "Modularis Core modular sound synthesis framework")
-set(DESCRIPTION "This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. Modularis free modular DAW is based on it. Framework is fully crossplatform between mobile and desktop devices.
+set(DESCRIPTION "This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. Modularis free modular DAW is based on it. Framework is fully crossplatform between mobile and desktop devices, supports various programming languages.
 
 Framework essence
   * Freedom
@@ -161,6 +161,12 @@ set(CPACK_COMPONENT_LIBMODULARIS-DEV_DESCRIPTION "${DESCRIPTION_SUMMARY} - devel
 ${DESCRIPTION}
 
 This package provides files for software development on the framework.")
+set(CPACK_COMPONENT_LIBMODULARIS-CPP-DEV_DISPLAY_NAME "Development files")
+set(CPACK_COMPONENT_LIBMODULARIS-CPP-DEV_DEPENDS libmodularis0 libmodularis-dev)
+set(CPACK_COMPONENT_LIBMODULARIS-CPP-DEV_DESCRIPTION "Modularis Core C++ - development files for C++
+${DESCRIPTION}
+
+This package provides a C++ language binding to Modularis Core library written in C for software development in C++ language.")
 if(PACKAGE_TYPE STREQUAL host)
 	if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 		set(PACKAGE_TYPE tar.gz)
@@ -186,6 +192,12 @@ if(PACKAGE_TYPE STREQUAL tar.gz)
 		COMPONENT libmodularis-dev
 		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-dev
 	)
+	install(FILES
+			src/packaging/deb/copyright
+			src/packaging/deb/changelog.gz
+		COMPONENT libmodularis-cpp-dev
+		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-cpp-dev
+	)
 elseif(PACKAGE_TYPE STREQUAL zip)
 	set(CPACK_GENERATOR ZIP)
 	install(FILES
@@ -199,6 +211,12 @@ elseif(PACKAGE_TYPE STREQUAL zip)
 			src/packaging/deb/changelog
 		COMPONENT libmodularis-dev
 		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-dev
+	)
+	install(FILES
+			src/packaging/deb/copyright
+			src/packaging/deb/changelog
+		COMPONENT libmodularis-cpp-dev
+		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-cpp-dev
 	)
 elseif(PACKAGE_TYPE STREQUAL deb)
 	set(CPACK_GENERATOR DEB)
@@ -218,6 +236,9 @@ elseif(PACKAGE_TYPE STREQUAL deb)
 	set(CPACK_DEBIAN_LIBMODULARIS-DEV_PACKAGE_NAME libmodularis-dev)
 	set(CPACK_DEBIAN_LIBMODULARIS-DEV_PACKAGE_SECTION libdevel)
 	set(CPACK_DEBIAN_LIBMODULARIS-DEV_PACKAGE_DEPENDS libmodularis0)
+	set(CPACK_DEBIAN_LIBMODULARIS-CPP-DEV_PACKAGE_NAME libmodularis-cpp-dev)
+	set(CPACK_DEBIAN_LIBMODULARIS-CPP-DEV_PACKAGE_SECTION libdevel)
+	set(CPACK_DEBIAN_LIBMODULARIS-CPP-DEV_PACKAGE_DEPENDS "libmodularis0, libmodularis-dev")
 	add_custom_target(changelog.Debian.gz ALL
 		COMMAND gzip -kf9 ../src/packaging/deb/changelog
 		COMMAND mv ../src/packaging/deb/changelog.gz ../src/packaging/deb/changelog.Debian.gz
@@ -235,6 +256,12 @@ elseif(PACKAGE_TYPE STREQUAL deb)
 		COMPONENT libmodularis-dev
 		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-dev
 	)
+	install(FILES
+			src/packaging/deb/copyright
+			src/packaging/deb/changelog.Debian.gz
+		COMPONENT libmodularis-cpp-dev
+		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-cpp-dev
+	)
 	set(CMAKE_INSTALL_LIBDIR lib/${MULTIARCH})
 elseif(PACKAGE_TYPE STREQUAL NSIS)
 	set(CPACK_GENERATOR NSIS)
@@ -250,28 +277,50 @@ elseif(PACKAGE_TYPE STREQUAL NSIS)
 		COMPONENT libmodularis-dev
 		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-dev
 	)
+	install(FILES
+			src/packaging/deb/copyright
+			src/packaging/deb/changelog
+		COMPONENT libmodularis-cpp-dev
+		DESTINATION ${CMAKE_INSTALL_DOCDIR}/libmodularis-cpp-dev
+	)
 endif()
 
 include(GNUInstallDirs)
 
 if(NOT MSVC)
-	add_compile_options(-O -s)
+	add_compile_options(-O -s -fms-extensions)
 	add_link_options(-O -s)
 endif()
 include_directories(include)
 add_library(modularis SHARED
-	src/modules/players/Sequencer.cpp
-	src/modules/synthesizers/Oscillator.cpp
-	src/modules/system/Module.cpp
-	src/modules/system/Output.cpp
-	src/ports/controllers/Integer_controller.cpp
-	src/ports/controllers/Real_controller.cpp
-	src/ports/system/Port.cpp
-	src/ports/system/Ports_folder.cpp
-	src/ports/Note.cpp
-	src/ports/Sound.cpp
+	src/framework/libmodularis0/modules/players/Sequencer.c
+	src/framework/libmodularis0/modules/synthesizers/Oscillator.c
+	src/framework/libmodularis0/modules/system/Module.c
+	src/framework/libmodularis0/modules/system/Output.c
+	src/framework/libmodularis0/ports/controllers/ADSR.c
+	src/framework/libmodularis0/ports/controllers/Integer_controller.c
+	src/framework/libmodularis0/ports/controllers/Real_controller.c
+	src/framework/libmodularis0/ports/system/Port.c
+	src/framework/libmodularis0/ports/system/Ports_folder.c
+	src/framework/libmodularis0/ports/Note.c
+	src/framework/libmodularis0/ports/Sound.c
+	src/framework/libmodularis0/Modularis.c
 )
 set_property(TARGET modularis PROPERTY SOVERSION 0)
+add_library(modularis-cpp STATIC
+	src/framework/libmodularis-cpp-dev/modules/players/Sequencer.cpp
+	src/framework/libmodularis-cpp-dev/modules/synthesizers/Oscillator.cpp
+	src/framework/libmodularis-cpp-dev/modules/system/Module.cpp
+	src/framework/libmodularis-cpp-dev/modules/system/Output.cpp
+	src/framework/libmodularis-cpp-dev/ports/controllers/ADSR.cpp
+	src/framework/libmodularis-cpp-dev/ports/controllers/Integer_controller.cpp
+	src/framework/libmodularis-cpp-dev/ports/controllers/Real_controller.cpp
+	src/framework/libmodularis-cpp-dev/ports/system/Port.cpp
+	src/framework/libmodularis-cpp-dev/ports/system/Ports_folder.cpp
+	src/framework/libmodularis-cpp-dev/ports/Note.cpp
+	src/framework/libmodularis-cpp-dev/ports/Sound.cpp
+	src/framework/libmodularis-cpp-dev/Modularis.cpp
+)
 install(TARGETS modularis
 	RUNTIME
 		COMPONENT libmodularis0
@@ -285,8 +334,17 @@ install(DIRECTORY "include/Modularis_Core"
 	COMPONENT libmodularis-dev
 	TYPE INCLUDE
 )
+install(TARGETS modularis-cpp
+	COMPONENT libmodularis-cpp-dev
+)
+install(DIRECTORY "include/Modularis_Core_C++"
+	COMPONENT libmodularis-cpp-dev
+	TYPE INCLUDE
+)
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
 	add_custom_target(uninstall
+		COMMAND -rm "${CMAKE_INSTALL_FULL_LIBDIR}/libmodularis-cpp.a"
+		COMMAND -rm -r "${CMAKE_INSTALL_FULL_INCLUDEDIR}/Modularis_Core_C++"
 		COMMAND -rm "${CMAKE_INSTALL_FULL_LIBDIR}/libmodularis.so"
 		COMMAND -rm -r "${CMAKE_INSTALL_FULL_INCLUDEDIR}/Modularis_Core"
 		COMMAND -rm -r "${CMAKE_INSTALL_FULL_DOCDIR}/libmodularis0"

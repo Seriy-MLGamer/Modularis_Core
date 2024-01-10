@@ -1,3 +1,10 @@
+libmodularis (0.0.0pre-alpha-raw) UNRELEASED; urgency=medium
+
+  * Каркас переписан с C++ на C.
+  * Каркас теперь поддерживает 2 языка: C и C++.
+
+ -- Серый MLGamer <Seriy-MLGamer@yandex.ru>  Tue, 9 Jan 2024 23:46:00 +0400
+
 libmodularis (0.0.0pre-alpha-raw-undone) UNRELEASED; urgency=medium
 
   * Вышла самая первая версия каркаса!

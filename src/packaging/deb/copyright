@@ -4,11 +4,11 @@ Upstream-Contact: Серый MLGamer <Seriy-MLGamer@yandex.ru>
 Source: https://github.com/Seriy-MLGamer/Modularis_Core
 
 Files: *
-Copyright: 2022-2023 Серый MLGamer <Seriy-MLGamer@yandex.ru>
+Copyright: 2022-2024 Серый MLGamer <Seriy-MLGamer@yandex.ru>
 License: GPL-3+
 
-Files: README.md, README en_US.md
-Copyright: 2022-2023 Серый MLGamer <Seriy-MLGamer@yandex.ru>
+Files: README.md, README en_US.md, share/*, test/share/*, test/src/share/*
+Copyright: 2022-2024 Серый MLGamer <Seriy-MLGamer@yandex.ru>
 License: CC-BY-SA-4
 
 License: GPL-3+

@@ -1,5 +1,5 @@
 <!--
-(C) 2022-2023 Серый MLGamer. All freedoms preserved.
+(C) 2022-2024 Серый MLGamer. All freedoms preserved.
 Дзен: <https://dzen.ru/seriy_mlgamer>
 SoundCloud: <https://soundcloud.com/seriy_mlgamer>
 YouTube: <https://www.youtube.com/@Seriy_MLGamer>
@@ -14,7 +14,7 @@ This file is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 ![Modularis Core full logo](share/logo%20en_US.svg)
 
-This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. [Modularis](https://github.com/Seriy-MLGamer/Modularis) free modular DAW is based on it. Framework is ***fully* crossplatform** between mobile and desktop devices.
+This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. [Modularis](https://github.com/Seriy-MLGamer/Modularis) free modular DAW is based on it. Framework is ***fully* crossplatform** between mobile and desktop devices, supports various programming languages.
 
 ## Framework essence
 
@@ -60,11 +60,13 @@ You should have received a copy of the GNU General Public License along with Mod
 
 ***Only* free** (*as in freedom*) software under the terms of the GNU General Public License can be based on the *Modularis Core* framework.
 
-# The very first version of the framework has been released!
+# Everything is just continuing! The framework is expanding!
 
-## Modularis Core 0.0.0pre-alpha-raw-undone
+## Modularis Core 0.0.0pre-alpha-raw
 
-Of course, this framework is very raw and undone yet, but it already can do something. For example, it can make a simple sound, and this is enough for making some music!
+The framework has been rewritten in C and now supports 2 programming languages: C and C++. C++ support is done using the language binding - Modularis Core C++.
+
+The framework contents has not been changed yet.
 
 ## Framework contents
 
@@ -195,19 +197,29 @@ Packaging is done using CPack utility that is the part of CMake. In order to mak
 
 ### Testing
 
-After the procedures above you can test the framework by building and running my little track written in C++ using this framework.
+After the procedures above you can test the framework by building and running test programs which use this framework. One of them is written in C, other - in C++. They contain my little track.
 
-Firstly, install the framework. Then install SDL2 library. After that run this command in "test" folder:
+Firstly, install the framework. Then install SDL2 library. After that run this command in "test" folder, if you want to test C:
 
 #### Bash
 
-	$ ./test
+	$ ./test-c
 
 #### CMD
 
-	>test
+	>test-c
 
-These build scripts expect work with GCC compiler. But, I think, manual test compilation using other compiler with similar compilation arguments will not be a big deal.
+Or run this command, if you want to test C++:
+
+#### Bash
+
+	$ ./test-cpp
+
+#### CMD
+
+	>test-cpp
+
+These build scripts expect working with GCC compiler. But, I think, manual test compilation using other compiler with similar compilation arguments will not be a big deal.
 
 If you test in Windows, make sure that static and dynamic SDL2 library files are in "test" folder or SDL2 library is added to PATH (\<SDL2 root folder>\\bin), CPATH (\<SDL2 root folder>\\include) and LIBRARY_PATH (\<SDL2 root folder>\\lib) environment variables.
 

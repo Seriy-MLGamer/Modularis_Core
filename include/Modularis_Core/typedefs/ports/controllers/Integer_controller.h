@@ -1,0 +1,3 @@
+#pragma once
+
+typedef struct MDLRS_Integer_controller MDLRS_Integer_controller;

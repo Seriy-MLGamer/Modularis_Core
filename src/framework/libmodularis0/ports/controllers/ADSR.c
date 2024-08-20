@@ -23,8 +23,8 @@ void MDLRS_ADSR_new(MDLRS_ADSR *self, MDLRS_Module *module, float attack, float 
 	MDLRS_Real_controller_new(&self->decay, module, decay);
 	MDLRS_Real_controller_new(&self->sustain, module, sustain);
 	MDLRS_Real_controller_new(&self->release, module, release);
-	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Port_base *)&self->attack);
-	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Port_base *)&self->decay);
-	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Port_base *)&self->sustain);
-	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Port_base *)&self->release);
+	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Any_port *)&self->attack);
+	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Any_port *)&self->decay);
+	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Any_port *)&self->sustain);
+	MDLRS_Ports_folder_add((MDLRS_Ports_folder *)self, (MDLRS_Any_port *)&self->release);
 }

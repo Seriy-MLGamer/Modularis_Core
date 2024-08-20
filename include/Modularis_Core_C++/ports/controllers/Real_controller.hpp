@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/ports/system/Port.hpp>
+#include <Modularis_Core_C++/system/ports/Port.hpp>
 
 namespace MDLRS
 {
@@ -25,6 +25,6 @@ namespace MDLRS
 		float value;
 
 		Real_controller(Module *module, float value);
-		void process();
+		void on_update();
 	};
 }

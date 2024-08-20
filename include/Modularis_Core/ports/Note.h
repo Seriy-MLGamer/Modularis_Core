@@ -15,44 +15,31 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/ports/Note.h>
-#include <Modularis_Core/ports/system/Port.h>
+#include <Modularis_Core/system/ports/Port.h>
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <Modularis_Core/typedefs/modules/system/Module.h>
-#include <Modularis_Core/ports/system/Note_event.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
+#include <Modularis_Core/system/ports/Note/Note_event.h>
+#include <Modularis_Core/system/ports/Note/Note_events.h>
 #include <stdlib.h>
 
 struct MDLRS_Note
 {
 	MDLRS_Port;
 
-	MDLRS_Note_event *events;
+	MDLRS_Note_events *events;
 	uint32_t events_size;
-	uint32_t events_count;
-	uint32_t max_scancode;
-	bool has_connection;
 };
 void MDLRS_Note_new(MDLRS_Note *self, MDLRS_Module *module);
-void MDLRS_Note_process(MDLRS_Note *self);
-inline void MDLRS_Note_add(MDLRS_Note *self, MDLRS_Note_event event)
-{
-	if (self->events_size)
-	{
-		if (self->events_count==self->events_size) self->events=(MDLRS_Note_event *)realloc(self->events, sizeof(MDLRS_Note_event)*(self->events_size+=8));
-		self->events[self->events_count++]=event;
-	}
-	else
-	{
-		self->events=(MDLRS_Note_event *)malloc(sizeof(MDLRS_Note_event)*8);
-		*self->events=event;
-		self->events_size=8;
-		self->events_count=1;
-	}
-}
+void MDLRS_Note_on_update(MDLRS_Note *self);
+void MDLRS_Note_add(MDLRS_Note *self, MDLRS_Note_event event);
 inline void MDLRS_Note_remove(MDLRS_Note *self)
 {
-	if (self->events) free(self->events);
+	if (self->events)
+	{
+		for (uint32_t a=0; a!=self->events_size; a++) if (self->events[a].events) free(self->events[a].events);
+		free(self->events);
+	}
 
 	MDLRS_Port_remove((MDLRS_Port *)self);
 }

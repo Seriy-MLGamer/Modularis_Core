@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/ports/system/Ports_folder.hpp>
+#include <Modularis_Core_C++/ports/Ports_folder.hpp>
 
 #include <Modularis_Core_C++/ports/controllers/Real_controller.hpp>
 
@@ -27,5 +27,18 @@ namespace MDLRS
 		Real_controller attack, decay, sustain, release;
 
 		ADSR(Module *module, float attack, float decay, float sustain, float release);
+		inline float pressed(float time);
+		inline float released(float time);
 	};
+	float ADSR::pressed(float time)
+	{
+		if (time<attack.value) return time/attack.value;
+		if (time<attack.value+decay.value) return sustain.value+(1-sustain.value)*(1-(time-attack.value)/decay.value);
+		return sustain.value;
+	}
+	float ADSR::released(float time)
+	{
+		if (time<release.value) return sustain.value*(1-time/release.value);
+		return 0;
+	}
 }

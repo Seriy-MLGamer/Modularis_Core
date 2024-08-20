@@ -16,33 +16,36 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #include <stddef.h>
 #include <stdint.h>
-#include <Modularis_Core/ports/system/Note_event.h>
-#include <Modularis_Core/ports/system/Note_type.h>
-#include <stdlib.h>
-#include <Modularis_Core/modules/system/Oscillation.h>
-#include <string.h>
+#include <Modularis_Core/system/modules/synthesizers/Oscillator/Pressed_oscillations.h>
+#include <Modularis_Core/system/modules/synthesizers/Oscillator/Oscillation.h>
 #include <Modularis_Core/Modularis.h>
-#include <stdbool.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <stdbool.h>
+#include <Modularis_Core/system/ports/Connection.h>
+#include <stdlib.h>
+#include <string.h>
+#include <Modularis_Core/typedefs/system/ports/Port.h>
+#include <Modularis_Core/system/ports/Note/Note_events.h>
+#include <Modularis_Core/system/ports/Note/Note_event.h>
+#include <Modularis_Core/system/ports/Note/Note_type.h>
 
 static struct MDLRS_Module_f f=
 {
-	(void (*)(void *))MDLRS_Oscillator_process
+	(void (*)(void *))MDLRS_Oscillator_on_update
 };
 
 void MDLRS_Oscillator_new_body(MDLRS_Oscillator *self)
 {
 	self->f=&f;
 
-	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Port_base *)&self->input);
-	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Port_base *)&self->volume);
-	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Port_base *)&self->waveform);
-	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Port_base *)&self->envelope);
-	MDLRS_Ports_folder_add(&self->outputs, (MDLRS_Port_base *)&self->output);
-	self->oscillations=NULL;
-	self->oscillations_size=0;
-	self->oscillations_count=0;
+	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Any_port *)&self->input);
+	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Any_port *)&self->volume);
+	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Any_port *)&self->waveform);
+	MDLRS_Ports_folder_add(&self->inputs, (MDLRS_Any_port *)&self->envelope);
+	MDLRS_Ports_folder_add(&self->outputs, (MDLRS_Any_port *)&self->output);
+	self->pressed=NULL;
+	self->pressed_count=0;
 }
 void MDLRS_Oscillator_new(MDLRS_Oscillator *self, MDLRS_Modularis *project)
 {
@@ -52,65 +55,143 @@ void MDLRS_Oscillator_new(MDLRS_Oscillator *self, MDLRS_Modularis *project)
 	MDLRS_Integer_controller_new(&self->waveform, (MDLRS_Module *)self, 0);
 	MDLRS_ADSR_new(&self->envelope, (MDLRS_Module *)self, 0, 0, 1, 0);
 	MDLRS_Sound_new(&self->output, (MDLRS_Module *)self);
+	MDLRS_Released_oscillations_new(&self->released);
 	MDLRS_Oscillator_new_body(self);
 }
-void MDLRS_Oscillator_process(MDLRS_Oscillator *self)
+static void generate(MDLRS_Oscillator *self, float (*waveform)(float phase))
 {
-	for (uint32_t a=0; a!=self->input.events_count; a++)
+	for (uint32_t a=0; a!=self->input.connections_count; a++)
 	{
-		MDLRS_Note_event *event=self->input.events+a;
-		switch (event->type)
+		MDLRS_Pressed_oscillations *pressed=self->pressed+a;
+		for (uint32_t a=0; a!=pressed->oscillations_count; a++)
 		{
-			case NOTE_START:
-				if (event->scancode>=self->oscillations_count)
+			MDLRS_Oscillation *oscillation=pressed->oscillations+a;
+			if (oscillation->exists) self->output.frame+=MDLRS_ADSR_pressed(&self->envelope, (float)oscillation->time/self->project->sample_rate)*oscillation->velocity*waveform(oscillation->phase);
+		}
+	}
+	for (uint32_t a=0; a!=self->released.oscillations_count; a++)
+	{
+		MDLRS_Oscillation *oscillation=self->released.oscillations+a;
+		if (oscillation->exists) self->output.frame+=MDLRS_ADSR_pressed(&self->envelope, (float)oscillation->time/self->project->sample_rate)*oscillation->velocity*waveform(oscillation->phase);
+		else self->output.frame+=MDLRS_ADSR_released(&self->envelope, (float)oscillation->time/self->project->sample_rate)*oscillation->velocity*waveform(oscillation->phase);
+	}
+}
+static float sine(float phase)
+{
+	return sinf(phase*2*(float)M_PI);
+}
+static float triangle(float phase)
+{
+	return 4*((phase>=.25f&&phase<.75f)*(.5f-phase)+(phase<.25f)*phase+(phase>=.75f)*(phase-1));
+}
+static float saw(float phase)
+{
+	return 1-2*phase;
+}
+static float square(float phase)
+{
+	return (phase<.5f)-(phase>=.5f);
+}
+void MDLRS_Oscillator_on_update(MDLRS_Oscillator *self)
+{
+	bool reconnect=false;
+	if (self->input.connections_count!=self->pressed_count) reconnect=true;
+	else
+	{
+		uint32_t a;
+		for (a=0; a!=self->input.connections_count; a++) if (self->input.connections[a].port!=self->pressed[a].connection) break;
+		if (a!=self->input.connections_count) reconnect=true;
+	}
+	if (reconnect)
+	{
+		if (self->input.connections_count)
+		{
+			MDLRS_Pressed_oscillations *new_oscillations=malloc(sizeof(MDLRS_Pressed_oscillations)*self->input.connections_count);
+			if (self->pressed)
+			{
+				bool *picked=malloc(sizeof(bool)*self->pressed_count);
+				memset(picked, 0, sizeof(bool)*self->pressed_count);
+				for (uint32_t a=0; a!=self->input.connections_count; a++)
 				{
-					if (event->scancode>=self->oscillations_size)
+					MDLRS_Port *port=self->input.connections[a].port;
+					uint32_t b;
+					for (b=0; b!=self->pressed_count; b++) if (self->pressed[b].connection==port) break;
+					if (b!=self->pressed_count)
 					{
-						if (self->oscillations)
-						{
-							self->oscillations=realloc(self->oscillations, sizeof(MDLRS_Oscillation)*(event->scancode+1));
-							memset(self->oscillations+self->oscillations_size, 0, sizeof(MDLRS_Oscillation)*(event->scancode-self->oscillations_size));
-						}
-						else
-						{
-							self->oscillations=malloc(sizeof(MDLRS_Oscillation)*(event->scancode+1));
-							memset(self->oscillations, 0, sizeof(MDLRS_Oscillation)*event->scancode);
-						}
-						self->oscillations_count=self->oscillations_size=event->scancode+1;
+						new_oscillations[a]=self->pressed[b];
+						picked[b]=true;
 					}
-					else self->oscillations_count=event->scancode+1;
+					else MDLRS_Pressed_oscillations_new(new_oscillations+a, port);
 				}
-				MDLRS_Oscillation_new(self->oscillations+event->scancode, event->pitch/self->project->sample_rate, event->velocity/127.f, event->phase);
-				break;
-			case NOTE_CHANGE:
-				if (event->scancode<self->oscillations_count) if (self->oscillations[event->scancode].exist) MDLRS_Oscillation_change(self->oscillations+event->scancode, event->pitch/self->project->sample_rate, event->velocity/127.f);
-				break;
-			case NOTE_STOP:
-				if (event->scancode<self->oscillations_count) if (self->oscillations[event->scancode].exist)
-				{
-					self->oscillations[event->scancode].exist=false;
-					if (event->scancode==self->oscillations_count-1) while (--self->oscillations_count) if (self->oscillations[self->oscillations_count-1].exist) break;
-				}
+				for (uint32_t a=0; a!=self->pressed_count; a++) if (!picked[a]) MDLRS_Released_oscillations_move(&self->released, self->pressed+a);
+				free(picked);
+				free(self->pressed);
+			}
+			else for (uint32_t a=0; a!=self->input.connections_count; a++) MDLRS_Pressed_oscillations_new(new_oscillations+a, self->input.connections[a].port);
+			self->pressed=new_oscillations;
+			self->pressed_count=self->input.connections_count;
+		}
+		else if (self->pressed)
+		{
+			for (uint32_t a=0; a!=self->pressed_count; a++) MDLRS_Released_oscillations_move(&self->released, self->pressed+a);
+			free(self->pressed);
+			self->pressed=NULL;
+			self->pressed_count=0;
+		}
+	}
+	for (uint32_t a=0; a!=self->input.connections_count; a++)
+	{
+		MDLRS_Note_events *events=self->input.events+a;
+		MDLRS_Pressed_oscillations *pressed=self->pressed+a;
+		for (uint32_t a=0; a!=events->events_count; a++)
+		{
+			MDLRS_Note_event *event=events->events+a;
+			switch (event->type)
+			{
+				case NOTE_START:
+					MDLRS_Pressed_oscillations_start(pressed, event->scancode, &self->released, event->pitch/self->project->sample_rate, event->phase, event->velocity);
+					break;
+				case NOTE_CHANGE:
+					MDLRS_Pressed_oscillations_change(pressed, event->scancode, event->pitch/self->project->sample_rate, event->velocity);
+					break;
+				case NOTE_STOP:
+					MDLRS_Pressed_oscillations_stop(pressed, event->scancode, &self->released);
+			}
 		}
 	}
 	self->output.frame=0;
 	switch (self->waveform.value)
 	{
 		case 0:
-			for (uint32_t a=0; a!=self->oscillations_count; a++) if (self->oscillations[a].exist) self->output.frame+=self->volume.value*self->oscillations[a].velocity*sinf(self->oscillations[a].phase*2*(float)M_PI);
+			generate(self, sine);
 			break;
 		case 1:
-			for (uint32_t a=0; a!=self->oscillations_count; a++) if (self->oscillations[a].exist)
-			{
-				float phase=self->oscillations[a].phase;
-				self->output.frame+=4*self->volume.value*self->oscillations[a].velocity*((phase>=.25f&&phase<.75f)*(.5f-phase)+(phase<.25f)*phase+(phase>=.75f)*(phase-1));
-			}
+			generate(self, triangle);
 			break;
 		case 2:
-			for (uint32_t a=0; a!=self->oscillations_count; a++) if (self->oscillations[a].exist) self->output.frame+=self->volume.value*self->oscillations[a].velocity*(1-2*self->oscillations[a].phase);
+			generate(self, saw);
 			break;
 		case 3:
-			for (uint32_t a=0; a!=self->oscillations_count; a++) if (self->oscillations[a].exist) self->output.frame+=self->volume.value*self->oscillations[a].velocity*((self->oscillations[a].phase<.5f)-(self->oscillations[a].phase>=.5f));
+			generate(self, square);
 	}
-	for (uint32_t a=0; a!=self->oscillations_count; a++) if (self->oscillations[a].exist) MDLRS_Oscillation_update(self->oscillations+a);
+	self->output.frame*=self->volume.value;
+	MDLRS_Released_oscillations_update(&self->released, &self->envelope);
+	for (uint32_t a=0; a!=self->pressed_count; a++) MDLRS_Pressed_oscillations_update(self->pressed+a);
+}
+void MDLRS_Oscillator_remove(MDLRS_Oscillator *self)
+{
+	MDLRS_Module_disconnect((MDLRS_Module *)self);
+	if (self->pressed)
+	{
+		for (uint32_t a=0; a!=self->pressed_count; a++) MDLRS_Pressed_oscillations_remove(self->pressed+a);
+		free(self->pressed);
+	}
+
+	MDLRS_Note_remove(&self->input);
+	MDLRS_Port_remove((MDLRS_Port *)&self->volume);
+	MDLRS_Port_remove((MDLRS_Port *)&self->waveform);
+	MDLRS_ADSR_remove(&self->envelope);
+	MDLRS_Port_remove((MDLRS_Port *)&self->output);
+	MDLRS_Released_oscillations_remove(&self->released);
+	MDLRS_Module_remove((MDLRS_Module *)self);
 }

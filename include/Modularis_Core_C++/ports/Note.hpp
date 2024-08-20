@@ -14,10 +14,11 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/ports/system/Port.hpp>
+#include <Modularis_Core_C++/system/ports/Port.hpp>
 
 #include <cstdint>
-#include <Modularis_Core_C++/ports/system/Note_event.hpp>
+#include <Modularis_Core_C++/system/ports/Note/Note_event.hpp>
+#include <Modularis_Core_C++/system/ports/Note/Note_events.hpp>
 #include <cstdlib>
 
 namespace MDLRS
@@ -26,34 +27,20 @@ namespace MDLRS
 
 	struct Note: Port
 	{
-		Note_event *events;
+		Note_events *events;
 		uint32_t events_size;
-		uint32_t events_count;
-		uint32_t max_scancode;
-		bool has_connection;
 
 		Note(Module *module);
-		void process();
-		inline void add(Note_event event);
+		void on_update();
+		void operator+=(Note_event event);
 		inline ~Note();
 	};
-	void Note::add(Note_event event)
-	{
-		if (events_size)
-		{
-			if (events_count==events_size) events=(Note_event *)realloc(events, sizeof(Note_event)*(events_size+=8));
-			events[events_count++]=event;
-		}
-		else
-		{
-			events=(Note_event *)malloc(sizeof(Note_event)*8);
-			*events=event;
-			events_size=8;
-			events_count=1;
-		}
-	}
 	Note::~Note()
 	{
-		if (events) free(events);
+		if (events)
+		{
+			for (uint32_t a=0; a!=events_size; a++) if (events[a].events) free(events[a].events);
+			free(events);
+		}
 	}
 }

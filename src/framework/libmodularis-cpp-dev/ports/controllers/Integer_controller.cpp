@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core_C++/ports/controllers/Integer_controller.hpp>
 
 #include <cstdint>
-#include <Modularis_Core_C++/ports/system/Connection.hpp>
+#include <Modularis_Core_C++/system/ports/Connection.hpp>
 
 extern "C" void MDLRS_Integer_controller_new_body(MDLRS::Integer_controller *self, int32_t value);
 
@@ -25,7 +25,7 @@ namespace MDLRS
 	{
 		MDLRS_Integer_controller_new_body(this, value);
 	}
-	void Integer_controller::process()
+	void Integer_controller::on_update()
 	{
 		if (connections_count)
 		{

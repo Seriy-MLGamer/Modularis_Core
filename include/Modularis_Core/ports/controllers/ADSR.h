@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/ports/controllers/ADSR.h>
-#include <Modularis_Core/ports/system/Ports_folder.h>
+#include <Modularis_Core/ports/Ports_folder.h>
 
 #include <Modularis_Core/ports/controllers/Real_controller.h>
-#include <Modularis_Core/typedefs/modules/system/Module.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
 
 struct MDLRS_ADSR
 {
@@ -27,6 +27,17 @@ struct MDLRS_ADSR
 	MDLRS_Real_controller attack, decay, sustain, release;
 };
 void MDLRS_ADSR_new(MDLRS_ADSR *self, MDLRS_Module *module, float attack, float decay, float sustain, float release);
+inline float MDLRS_ADSR_pressed(MDLRS_ADSR *self, float time)
+{
+	if (time<self->attack.value) return time/self->attack.value;
+	if (time<self->attack.value+self->decay.value) return self->sustain.value+(1-self->sustain.value)*(1-(time-self->attack.value)/self->decay.value);
+	return self->sustain.value;
+}
+inline float MDLRS_ADSR_released(MDLRS_ADSR *self, float time)
+{
+	if (time<self->release.value) return self->sustain.value*(1-time/self->release.value);
+	return 0;
+}
 inline void MDLRS_ADSR_remove(MDLRS_ADSR *self)
 {
 	MDLRS_Port_remove((MDLRS_Port *)&self->attack);

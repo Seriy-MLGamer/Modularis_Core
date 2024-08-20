@@ -18,9 +18,9 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <Modularis_Core/typedefs/modules/system/Module.h>
-#include <Modularis_Core/modules/system/Output.h>
-#include <Modularis_Core/core/types/Sound_value.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
+#include <Modularis_Core/system/modules/Output.h>
+#include <Modularis_Core/system/types/Sound_value.h>
 #include <Modularis_Core/ports/Sound.h>
 #include <stdlib.h>
 

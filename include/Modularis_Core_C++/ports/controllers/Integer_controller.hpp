@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/ports/system/Port.hpp>
+#include <Modularis_Core_C++/system/ports/Port.hpp>
 
 #include <cstdint>
 
@@ -27,6 +27,6 @@ namespace MDLRS
 		int32_t value;
 
 		Integer_controller(Module *module, int32_t value);
-		void process();
+		void on_update();
 	};
 }

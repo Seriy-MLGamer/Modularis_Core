@@ -14,19 +14,19 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/modules/system/Module.hpp>
+#include <Modularis_Core_C++/system/modules/Module.hpp>
 
 #include <Modularis_Core_C++/ports/Note.hpp>
 #include <Modularis_Core_C++/ports/controllers/Real_controller.hpp>
 #include <Modularis_Core_C++/ports/controllers/Integer_controller.hpp>
 #include <Modularis_Core_C++/ports/controllers/ADSR.hpp>
 #include <Modularis_Core_C++/ports/Sound.hpp>
+#include <Modularis_Core_C++/system/modules/synthesizers/Oscillator/Released_oscillations.hpp>
 #include <cstdint>
-#include <cstdlib>
 
 namespace MDLRS
 {
-	struct Oscillation;
+	struct Pressed_oscillations;
 	struct Modularis;
 
 	struct Oscillator: Module
@@ -36,17 +36,12 @@ namespace MDLRS
 		Integer_controller waveform;
 		ADSR envelope;
 		Sound output;
-		Oscillation *oscillations;
-		uint32_t oscillations_size;
-		uint32_t oscillations_count;
+		Released_oscillations released;
+		Pressed_oscillations *pressed;
+		uint32_t pressed_count;
 
 		Oscillator(Modularis &project);
-		void process();
-		inline ~Oscillator();
+		void on_update();
+		~Oscillator();
 	};
-	Oscillator::~Oscillator()
-	{
-		disconnect();
-		if (oscillations) free(oscillations);
-	}
 }

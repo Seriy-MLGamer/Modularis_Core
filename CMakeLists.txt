@@ -126,7 +126,7 @@ endif()
 set(CMAKE_INSTALL_DOCDIR share/doc)
 
 set(CPACK_PACKAGE_NAME libmodularis)
-set(CPACK_PACKAGE_VERSION 0.0.0pre-alpha-raw)
+set(CPACK_PACKAGE_VERSION 0.0.0pre-alpha)
 set(CPACK_PACKAGE_VENDOR "Серый MLGamer <Seriy-MLGamer@yandex.ru>")
 set(CPACK_RESOURCE_FILE_LICENSE ../COPYING.md)
 set(DESCRIPTION_SUMMARY "Modularis Core modular sound synthesis framework")
@@ -293,32 +293,58 @@ if(NOT MSVC)
 endif()
 include_directories(include)
 add_library(modularis SHARED
+	src/framework/libmodularis0/modules/effects/note/Note_chorus.c
+	src/framework/libmodularis0/modules/effects/note/Transpose.c
+	src/framework/libmodularis0/modules/effects/sound/Amplifier.c
+	src/framework/libmodularis0/modules/effects/sound/Delay.c
+	src/framework/libmodularis0/modules/effects/sound/Modulator.c
 	src/framework/libmodularis0/modules/players/Sequencer.c
 	src/framework/libmodularis0/modules/synthesizers/Oscillator.c
-	src/framework/libmodularis0/modules/system/Module.c
-	src/framework/libmodularis0/modules/system/Output.c
+	src/framework/libmodularis0/modules/synthesizers/Sampler.c
 	src/framework/libmodularis0/ports/controllers/ADSR.c
 	src/framework/libmodularis0/ports/controllers/Integer_controller.c
 	src/framework/libmodularis0/ports/controllers/Real_controller.c
-	src/framework/libmodularis0/ports/system/Port.c
-	src/framework/libmodularis0/ports/system/Ports_folder.c
 	src/framework/libmodularis0/ports/Note.c
+	src/framework/libmodularis0/ports/Ports_folder.c
 	src/framework/libmodularis0/ports/Sound.c
+	src/framework/libmodularis0/system/modules/synthesizers/Oscillator/Pressed_oscillations.c
+	src/framework/libmodularis0/system/modules/synthesizers/Oscillator/Released_oscillations.c
+	src/framework/libmodularis0/system/modules/synthesizers/Sampler/Pressed_samples.c
+	src/framework/libmodularis0/system/modules/synthesizers/Sampler/Released_samples.c
+	src/framework/libmodularis0/system/modules/synthesizers/Sampler/Sample.c
+	src/framework/libmodularis0/system/modules/Module.c
+	src/framework/libmodularis0/system/modules/Output.c
+	src/framework/libmodularis0/system/ports/Port.c
+	src/framework/libmodularis0/user/modules/players/Sequencer/Pattern_none.c
+	src/framework/libmodularis0/user/modules/players/Sequencer/Pattern.c
 	src/framework/libmodularis0/Modularis.c
 )
 set_property(TARGET modularis PROPERTY SOVERSION 0)
 add_library(modularis-cpp STATIC
+	src/framework/libmodularis-cpp-dev/modules/effects/note/Note_chorus.cpp
+	src/framework/libmodularis-cpp-dev/modules/effects/note/Transpose.cpp
+	src/framework/libmodularis-cpp-dev/modules/effects/sound/Amplifier.cpp
+	src/framework/libmodularis-cpp-dev/modules/effects/sound/Delay.cpp
+	src/framework/libmodularis-cpp-dev/modules/effects/sound/Modulator.cpp
 	src/framework/libmodularis-cpp-dev/modules/players/Sequencer.cpp
 	src/framework/libmodularis-cpp-dev/modules/synthesizers/Oscillator.cpp
-	src/framework/libmodularis-cpp-dev/modules/system/Module.cpp
-	src/framework/libmodularis-cpp-dev/modules/system/Output.cpp
+	src/framework/libmodularis-cpp-dev/modules/synthesizers/Sampler.cpp
 	src/framework/libmodularis-cpp-dev/ports/controllers/ADSR.cpp
 	src/framework/libmodularis-cpp-dev/ports/controllers/Integer_controller.cpp
 	src/framework/libmodularis-cpp-dev/ports/controllers/Real_controller.cpp
-	src/framework/libmodularis-cpp-dev/ports/system/Port.cpp
-	src/framework/libmodularis-cpp-dev/ports/system/Ports_folder.cpp
 	src/framework/libmodularis-cpp-dev/ports/Note.cpp
+	src/framework/libmodularis-cpp-dev/ports/Ports_folder.cpp
 	src/framework/libmodularis-cpp-dev/ports/Sound.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/synthesizers/Oscillator/Pressed_oscillations.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/synthesizers/Oscillator/Released_oscillations.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/synthesizers/Sampler/Pressed_samples.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/synthesizers/Sampler/Released_samples.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/synthesizers/Sampler/Sample.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/Module.cpp
+	src/framework/libmodularis-cpp-dev/system/modules/Output.cpp
+	src/framework/libmodularis-cpp-dev/system/ports/Port.cpp
+	src/framework/libmodularis-cpp-dev/user/modules/players/Sequencer/Pattern_none.cpp
+	src/framework/libmodularis-cpp-dev/user/modules/players/Sequencer/Pattern.cpp
 	src/framework/libmodularis-cpp-dev/Modularis.cpp
 )
 install(TARGETS modularis
@@ -345,6 +371,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
 	add_custom_target(uninstall
 		COMMAND -rm "${CMAKE_INSTALL_FULL_LIBDIR}/libmodularis-cpp.a"
 		COMMAND -rm -r "${CMAKE_INSTALL_FULL_INCLUDEDIR}/Modularis_Core_C++"
+		COMMAND -rm -r "${CMAKE_INSTALL_FULL_DOCDIR}/libmodularis-cpp-dev"
 		COMMAND -rm "${CMAKE_INSTALL_FULL_LIBDIR}/libmodularis.so"
 		COMMAND -rm -r "${CMAKE_INSTALL_FULL_INCLUDEDIR}/Modularis_Core"
 		COMMAND -rm -r "${CMAKE_INSTALL_FULL_DOCDIR}/libmodularis0"

@@ -14,8 +14,12 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #include <Modularis_Core_C++/modules/synthesizers/Oscillator.hpp>
 
+#include <cstdint>
+#include <Modularis_Core_C++/system/modules/synthesizers/Oscillator/Pressed_oscillations.hpp>
+#include <cstdlib>
+
 extern "C" void MDLRS_Oscillator_new_body(MDLRS::Oscillator *self);
-extern "C" void MDLRS_Oscillator_process(MDLRS::Oscillator *self);
+extern "C" void MDLRS_Oscillator_on_update(MDLRS::Oscillator *self);
 
 namespace MDLRS
 {
@@ -23,8 +27,17 @@ namespace MDLRS
 	{
 		MDLRS_Oscillator_new_body(this);
 	}
-	void Oscillator::process()
+	void Oscillator::on_update()
 	{
-		MDLRS_Oscillator_process(this);
+		MDLRS_Oscillator_on_update(this);
+	}
+	Oscillator::~Oscillator()
+	{
+		disconnect();
+		if (pressed)
+		{
+			for (uint32_t a=0; a!=pressed_count; a++) pressed[a].~Pressed_oscillations();
+			free(pressed);
+		}
 	}
 }

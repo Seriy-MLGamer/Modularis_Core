@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/ports/controllers/Integer_controller.h>
-#include <Modularis_Core/ports/system/Port.h>
+#include <Modularis_Core/system/ports/Port.h>
 
 #include <stdint.h>
-#include <Modularis_Core/typedefs/modules/system/Module.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
 
 struct MDLRS_Integer_controller
 {
@@ -27,4 +27,4 @@ struct MDLRS_Integer_controller
 	int32_t value;
 };
 void MDLRS_Integer_controller_new(MDLRS_Integer_controller *self, MDLRS_Module *module, int32_t value);
-void MDLRS_Integer_controller_process(MDLRS_Integer_controller *self);
+void MDLRS_Integer_controller_on_update(MDLRS_Integer_controller *self);

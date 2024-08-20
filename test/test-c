@@ -1,4 +1,0 @@
-#!/bin/bash
-
-gcc -omodularis-test main.c -O -s -fms-extensions -Iinclude -lmodularis -lm -lSDL2
-./modularis-test

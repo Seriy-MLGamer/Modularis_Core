@@ -15,26 +15,27 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core/ports/Note.h>
 
 #include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <Modularis_Core/ports/system/Connection.h>
 #include <stdlib.h>
-#include <Modularis_Core/ports/system/Note_event.h>
-#include <Modularis_Core/ports/system/Note_type.h>
+#include <Modularis_Core/system/ports/Note/Note_events.h>
+#include <string.h>
+#include <stdint.h>
+#include <Modularis_Core/system/ports/Connection.h>
+#include <Modularis_Core/system/ports/Note/Note_event.h>
+#include <Modularis_Core/system/ports/Note/Note_type.h>
 
 static struct MDLRS_Port_f f=
 {
-	(int (*)(void *, MDLRS_Port_base *))MDLRS_Port_connect,
+	(int (*)(void *, MDLRS_Any_port *))MDLRS_Port_connect,
 	(int (*)(void *, MDLRS_Port *))MDLRS_Port_connect_port,
 	(int (*)(void *, MDLRS_Ports_folder *))MDLRS_Port_connect_folder,
 	(int (*)(void *))MDLRS_Port_disconnect,
-	(int (*)(void *, MDLRS_Port_base *))MDLRS_Port_disconnect_from_port,
+	(int (*)(void *, MDLRS_Any_port *))MDLRS_Port_disconnect_from_port,
 	(int (*)(void *, MDLRS_Port *))MDLRS_Port_disconnect_port,
 	(int (*)(void *, MDLRS_Ports_folder *))MDLRS_Port_disconnect_folder,
 	(int (*)(void *))MDLRS_Port_disconnect_input,
 	(void (*)(void *))MDLRS_Port_update,
 	(void (*)(void *))MDLRS_Port_get_ready,
-	(void (*)(void *))MDLRS_Note_process
+	(void (*)(void *))MDLRS_Note_on_update
 };
 
 void MDLRS_Note_new_body(MDLRS_Note *self)
@@ -43,9 +44,6 @@ void MDLRS_Note_new_body(MDLRS_Note *self)
 
 	self->events=NULL;
 	self->events_size=0;
-	self->events_count=0;
-	self->max_scancode=0;
-	self->has_connection=false;
 }
 void MDLRS_Note_new(MDLRS_Note *self, MDLRS_Module *module)
 {
@@ -54,56 +52,60 @@ void MDLRS_Note_new(MDLRS_Note *self, MDLRS_Module *module)
 
 	self->events=NULL;
 	self->events_size=0;
-	self->events_count=0;
-	self->max_scancode=0;
-	self->has_connection=false;
 }
-void MDLRS_Note_process(MDLRS_Note *self)
+void MDLRS_Note_on_update(MDLRS_Note *self)
 {
-	if (self->connections_count)
+	if (self->events_size<self->connections_count)
 	{
-		if (!self->has_connection)
+		if (self->events)
 		{
-			self->max_scancode=0;
-			self->has_connection=true;
+			self->events=realloc(self->events, sizeof(MDLRS_Note_events)*self->connections_count);
+			memset(self->events+self->events_size, 0, sizeof(MDLRS_Note_events)*(self->connections_count-self->events_size));
 		}
-		uint32_t count=((MDLRS_Note *)self->connections->port)->events_count;
-		if (count)
+		else
 		{
-			if (self->events)
+			self->events=malloc(sizeof(MDLRS_Note_events)*self->connections_count);
+			memset(self->events, 0, sizeof(MDLRS_Note_events)*self->connections_count);
+		}
+		self->events_size=self->connections_count;
+	}
+	for (uint32_t a=0; a!=self->connections_count; a++)
+	{
+		MDLRS_Note_events *events=self->events+a;
+		MDLRS_Note_events *connection_events=((MDLRS_Note *)self->connections[a].port)->events;
+		if (connection_events)
+		{
+			if (connection_events->events_count)
 			{
-				if (self->events_size<count)
+				if (events->events_size<connection_events->events_count)
 				{
-					self->events=realloc(self->events, sizeof(MDLRS_Note_event)*count);
-					self->events_size=count;
+					if (events->events) events->events=realloc(events->events, sizeof(MDLRS_Note_event)*connection_events->events_count);
+					else events->events=malloc(sizeof(MDLRS_Note_event)*connection_events->events_count);
+					events->events_size=connection_events->events_count;
 				}
+				for (uint32_t a=0; a!=connection_events->events_count; a++) events->events[a]=connection_events->events[a];
+				events->events_count=connection_events->events_count;
 			}
-			else
-			{
-				self->events=malloc(sizeof(MDLRS_Note_event)*count);
-				self->events_size=count;
-			}
-			MDLRS_Note_event *events=((MDLRS_Note *)self->connections->port)->events;
-			for (uint32_t a=0; a!=count; a++)
-			{
-				uint32_t scancode=events[a].scancode+1;
-				self->max_scancode=(self->max_scancode>scancode)*self->max_scancode+(self->max_scancode<=scancode)*scancode;
-				self->events[a]=events[a];
-			}
-			self->events_count=count;
+			else events->events_count=0;
 		}
-		else self->events_count=0;
+		else events->events_count=0;
 	}
-	else if (self->has_connection)
+}
+void MDLRS_Note_add(MDLRS_Note *self, MDLRS_Note_event event)
+{
+	if (self->events)
 	{
-		if (self->events_size<self->max_scancode)
-		{
-			self->events=realloc(self->events, sizeof(MDLRS_Note_event)*self->max_scancode);
-			self->events_size=self->max_scancode;
-		}
-		for (uint32_t a=0; a!=self->max_scancode; a++) self->events[a]=(MDLRS_Note_event){NOTE_STOP, a};
-		self->events_count=self->max_scancode;
-		self->has_connection=false;
+		if (self->events->events_count==self->events->events_size) self->events->events=realloc(self->events->events, sizeof(MDLRS_Note_event)*(self->events->events_size+=8));
+		self->events->events[self->events->events_count++]=event;
 	}
-	else self->events_count=0;
+	else
+	{
+		self->events=malloc(sizeof(MDLRS_Note_events));
+		memset(self->events, 0, sizeof(MDLRS_Note_events));
+		self->events_size=1;
+		self->events->events=malloc(sizeof(MDLRS_Note_event)*8);
+		*self->events->events=event;
+		self->events->events_size=8;
+		self->events->events_count=1;
+	}
 }

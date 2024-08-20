@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core_C++/ports/controllers/Real_controller.hpp>
 
 #include <cstdint>
-#include <Modularis_Core_C++/ports/system/Connection.hpp>
+#include <Modularis_Core_C++/system/ports/Connection.hpp>
 
 extern "C" void MDLRS_Real_controller_new_body(MDLRS::Real_controller *self, float value);
 
@@ -25,7 +25,7 @@ namespace MDLRS
 	{
 		MDLRS_Real_controller_new_body(this, value);
 	}
-	void Real_controller::process()
+	void Real_controller::on_update()
 	{
 		if (connections_count)
 		{

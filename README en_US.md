@@ -56,17 +56,15 @@ Modularis Core is distributed in the hope that it will be useful, but WITHOUT AN
 
 You should have received a copy of the GNU General Public License along with Modularis Core. If not, see <https://www.gnu.org/licenses/>.
 
-![GNU General Public License version 3](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)
+![GNU General Public License version 3](share/gplv3-with-text-136x68.png)
 
 ***Only* free** (*as in freedom*) software under the terms of the GNU General Public License can be based on the *Modularis Core* framework.
 
-# Everything is just continuing! The framework is expanding!
+# The Global Update! The framework has been filled with new features!
 
-## Modularis Core 0.0.0pre-alpha-raw
+## Modularis Core 0.0.0pre-alpha
 
-The framework has been rewritten in C and now supports 2 programming languages: C and C++. C++ support is done using the language binding - Modularis Core C++.
-
-The framework contents has not been changed yet.
+A lot of new modules have been added and existing modules have been improved.
 
 ## Framework contents
 
@@ -80,13 +78,41 @@ It has feature of singlethreaded sound synthesis. It has "lazy update" mode - mo
 
   * Sequencer
 
-It has feature of polyphonic notes playing with fixed frequency and velocity.
+The feature of tone and velocity change has been added. The key "frames" system has been implemented for that. Tone, phase and velocity can be changed independedly on each other. 5 tone and velocity interpolation modes available: `INTERPOLATION_NONE`, `INTERPOLATION_LINEAR`, `INTERPOLATION_FAST`, `INTERPOLATION_SLOW`, `INTERPOLATION_SMOOTH`. Infinite polyphony. Compact data.
+
+The multitrack pattern system has been implemented. There are plans to add several pattern types in order to improve music creation comfort and save memory for slow devices where this library is going to be used.
 
 #### Synthesizers
 
   * Oscillator
 
-It has feature of polyphonic sound playing with fixed envelope. Sound can be of one of the 4 waveform types: sine `0`, triangle `1`, saw `2`, square `3`.
+ADSR-envelope support has been added. The module has feature of polyphonic sound playing with one of the 4 waveform types: sine `0`, triangle `1`, saw `2`, square `3`.
+
+  * Sampler
+
+This is the simple sampler with ADSR-envelope, polyphony and loop support and without sample interpolation support. The module is in development, but you can use it.
+
+#### Effects
+
+  * Note_chorus
+
+The note processing effect for supersaws creation.
+
+  * Transpose
+
+Notes transposition.
+
+  * Amplifier
+
+The simple increaser/reducer/phase invertor for sound.
+
+  * Delay
+
+Sound delay. If you make a feedback chain with these modules, you can get an echo effect.
+
+  * Modulator
+
+The amplitude modulation sound effect.
 
 ### Ports
 
@@ -101,7 +127,16 @@ The port to convey one channel of sound wave.
 #### Controllers
 
   * Integer_controller
+
+The integer controller.
+
   * Real_controller
+
+The real number controller.
+
+  * ADSR
+
+The real number controllers group: `attack`, `decay`, `sustain`, `release`.
 
 #### System
 
@@ -197,30 +232,32 @@ Packaging is done using CPack utility that is the part of CMake. In order to mak
 
 ### Testing
 
-After the procedures above you can test the framework by building and running test programs which use this framework. One of them is written in C, other - in C++. They contain my little track.
+After the procedures above you can test the framework by building and running the test program which uses this framework and is written in C. It contains the player with graphical interface where my new little track plays.
 
-Firstly, install the framework. Then install SDL2 library. After that run this command in "test" folder, if you want to test C:
+![The player](share/player.png)
 
-#### Bash
-
-	$ ./test-c
-
-#### CMD
-
-	>test-c
-
-Or run this command, if you want to test C++:
+First of all, install the framework (see Installation and also [Releases](https://github.com/Seriy-MLGamer/Modularis_Core/releases) section at GitHub). Then install SDL2, SDL2_image and SDL2_ttf libraries. Your PC must support OpenGL no earlier than version 2.0. After that run this command in "test" folder, if you want to test the player with GUI:
 
 #### Bash
 
-	$ ./test-cpp
+	$ ./test
 
 #### CMD
 
-	>test-cpp
+	>test
+
+Or run this command, if you want to test the player in console mode. It doesn't require neither SDL2_image and SDL2_ttf libraries nor OpenGL support:
+
+#### Bash
+
+	$ ./test-nogui
+
+#### CMD
+
+	>test-nogui
 
 These build scripts expect working with GCC compiler. But, I think, manual test compilation using other compiler with similar compilation arguments will not be a big deal.
 
-If you test in Windows, make sure that static and dynamic SDL2 library files are in "test" folder or SDL2 library is added to PATH (\<SDL2 root folder>\\bin), CPATH (\<SDL2 root folder>\\include) and LIBRARY_PATH (\<SDL2 root folder>\\lib) environment variables.
+If you test in Windows, make sure that headers, static and dynamic library files of SDL2, SDL2_image and SDL2_ttf are in "test" folder or the libraries are added to `PATH` (\<SDL2/SDL2_image/SDL2_ttf root folder>\\bin), `CPATH` (\<SDL2/SDL2_image/SDL2_ttf root folder>\\include) and `LIBRARY_PATH` (\<SDL2/SDL2_image/SDL2_ttf root folder>\\lib) environment variables.
 
 # Enjoy using this framework!

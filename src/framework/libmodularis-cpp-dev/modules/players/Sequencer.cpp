@@ -15,16 +15,21 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core_C++/modules/players/Sequencer.hpp>
 
 extern "C" void MDLRS_Sequencer_new_body(MDLRS::Sequencer *self);
-extern "C" void MDLRS_Sequencer_process(MDLRS::Sequencer *self);
+extern "C" void MDLRS_Sequencer_add(MDLRS::Sequencer *self, MDLRS::Any_pattern ***tracks, uint32_t tracks_count);
+extern "C" void MDLRS_Sequencer_on_update(MDLRS::Sequencer *self);
 
 namespace MDLRS
 {
-	Sequencer::Sequencer(Modularis &project): Module(project), BPM(this, 120), LPB(this, 8), cursor_position(this, 0), play(this, 0), output(this)
+	Sequencer::Sequencer(Modularis &project): Module(project), BPM(this, 120), LPB(this, 8), cursor_position(this, 0), loop(this, 0), play(this, 0), output(this)
 	{
 		MDLRS_Sequencer_new_body(this);
 	}
-	void Sequencer::process()
+	void Sequencer::add(Any_pattern ***tracks, uint32_t tracks_count)
 	{
-		MDLRS_Sequencer_process(this);
+		MDLRS_Sequencer_add(this, tracks, tracks_count);
+	}
+	void Sequencer::on_update()
+	{
+		MDLRS_Sequencer_on_update(this);
 	}
 }

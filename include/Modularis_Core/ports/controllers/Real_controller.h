@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/ports/controllers/Real_controller.h>
-#include <Modularis_Core/ports/system/Port.h>
+#include <Modularis_Core/system/ports/Port.h>
 
-#include <Modularis_Core/typedefs/modules/system/Module.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
 
 struct MDLRS_Real_controller
 {
@@ -26,4 +26,4 @@ struct MDLRS_Real_controller
 	float value;
 };
 void MDLRS_Real_controller_new(MDLRS_Real_controller *self, MDLRS_Module *module, float value);
-void MDLRS_Real_controller_process(MDLRS_Real_controller *self);
+void MDLRS_Real_controller_on_update(MDLRS_Real_controller *self);

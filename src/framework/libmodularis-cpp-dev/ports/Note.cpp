@@ -15,7 +15,8 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core_C++/ports/Note.hpp>
 
 extern "C" void MDLRS_Note_new_body(MDLRS::Note *self);
-extern "C" void MDLRS_Note_process(MDLRS::Note *self);
+extern "C" void MDLRS_Note_on_update(MDLRS::Note *self);
+extern "C" void MDLRS_Note_add(MDLRS::Note *self, MDLRS::Note_event event);
 
 namespace MDLRS
 {
@@ -23,8 +24,12 @@ namespace MDLRS
 	{
 		MDLRS_Note_new_body(this);
 	}
-	void Note::process()
+	void Note::on_update()
 	{
-		MDLRS_Note_process(this);
+		MDLRS_Note_on_update(this);
+	}
+	void Note::operator+=(Note_event event)
+	{
+		MDLRS_Note_add(this, event);
 	}
 }

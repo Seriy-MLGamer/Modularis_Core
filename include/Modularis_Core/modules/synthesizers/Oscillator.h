@@ -15,17 +15,17 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/modules/synthesizers/Oscillator.h>
-#include <Modularis_Core/modules/system/Module.h>
+#include <Modularis_Core/system/modules/Module.h>
 
 #include <Modularis_Core/ports/Note.h>
 #include <Modularis_Core/ports/controllers/Real_controller.h>
 #include <Modularis_Core/ports/controllers/Integer_controller.h>
 #include <Modularis_Core/ports/controllers/ADSR.h>
 #include <Modularis_Core/ports/Sound.h>
-#include <Modularis_Core/typedefs/modules/system/Oscillation.h>
+#include <Modularis_Core/system/modules/synthesizers/Oscillator/Released_oscillations.h>
+#include <Modularis_Core/typedefs/system/modules/synthesizers/Oscillator/Pressed_oscillations.h>
 #include <stdint.h>
 #include <Modularis_Core/typedefs/Modularis.h>
-#include <stdlib.h>
 
 struct MDLRS_Oscillator
 {
@@ -36,21 +36,10 @@ struct MDLRS_Oscillator
 	MDLRS_Integer_controller waveform;
 	MDLRS_ADSR envelope;
 	MDLRS_Sound output;
-	MDLRS_Oscillation *oscillations;
-	uint32_t oscillations_size;
-	uint32_t oscillations_count;
+	MDLRS_Released_oscillations released;
+	MDLRS_Pressed_oscillations *pressed;
+	uint32_t pressed_count;
 };
 void MDLRS_Oscillator_new(MDLRS_Oscillator *self, MDLRS_Modularis *project);
-void MDLRS_Oscillator_process(MDLRS_Oscillator *self);
-inline void MDLRS_Oscillator_remove(MDLRS_Oscillator *self)
-{
-	MDLRS_Module_disconnect((MDLRS_Module *)self);
-	if (self->oscillations) free(self->oscillations);
-
-	MDLRS_Note_remove(&self->input);
-	MDLRS_Port_remove((MDLRS_Port *)&self->volume);
-	MDLRS_Port_remove((MDLRS_Port *)&self->waveform);
-	MDLRS_ADSR_remove(&self->envelope);
-	MDLRS_Port_remove((MDLRS_Port *)&self->output);
-	MDLRS_Module_remove((MDLRS_Module *)self);
-}
+void MDLRS_Oscillator_on_update(MDLRS_Oscillator *self);
+void MDLRS_Oscillator_remove(MDLRS_Oscillator *self);

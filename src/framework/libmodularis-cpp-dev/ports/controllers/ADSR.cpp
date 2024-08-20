@@ -18,9 +18,9 @@ namespace MDLRS
 {
 	ADSR::ADSR(Module *module, float _attack, float _decay, float _sustain, float _release): attack(module, _attack), decay(module, _decay), sustain(module, _sustain), release(module, _release)
 	{
-		add(attack);
-		add(decay);
-		add(sustain);
-		add(release);
+		*this+=attack;
+		*this+=decay;
+		*this+=sustain;
+		*this+=release;
 	}
 }

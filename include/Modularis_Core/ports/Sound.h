@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <Modularis_Core/typedefs/ports/Sound.h>
-#include <Modularis_Core/ports/system/Port.h>
+#include <Modularis_Core/system/ports/Port.h>
 
-#include <Modularis_Core/core/types/Sound_value.h>
-#include <Modularis_Core/typedefs/modules/system/Module.h>
+#include <Modularis_Core/system/types/Sound_value.h>
+#include <Modularis_Core/typedefs/system/modules/Module.h>
 
 struct MDLRS_Sound
 {
@@ -27,4 +27,4 @@ struct MDLRS_Sound
 	MDLRS_Sound_value frame;
 };
 void MDLRS_Sound_new(MDLRS_Sound *self, MDLRS_Module *module);
-void MDLRS_Sound_process(MDLRS_Sound *self);
+void MDLRS_Sound_on_update(MDLRS_Sound *self);

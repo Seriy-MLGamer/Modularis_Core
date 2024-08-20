@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core_C++/ports/Sound.hpp>
 
 #include <cstdint>
-#include <Modularis_Core_C++/ports/system/Connection.hpp>
+#include <Modularis_Core_C++/system/ports/Connection.hpp>
 
 extern "C" void MDLRS_Sound_new_body(MDLRS::Sound *self);
 
@@ -25,7 +25,7 @@ namespace MDLRS
 	{
 		MDLRS_Sound_new_body(this);
 	}
-	void Sound::process()
+	void Sound::on_update()
 	{
 		frame=0;
 		for (uint32_t a=0; a!=connections_count; a++) frame+=((Sound *)connections[a].port)->frame;

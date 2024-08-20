@@ -1,0 +1,3 @@
+#pragma once
+
+typedef struct MDLRS_Patterns_sequence_data MDLRS_Patterns_sequence_data;

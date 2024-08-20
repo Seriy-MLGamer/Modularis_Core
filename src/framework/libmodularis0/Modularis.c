@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core/Modularis.h>
 
 #include <stdint.h>
-#include <Modularis_Core/modules/system/Module.h>
+#include <Modularis_Core/system/modules/Module.h>
 
 void MDLRS_Modularis_update(MDLRS_Modularis *self)
 {

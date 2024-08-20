@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License along with Mod
 #pragma once
 
 #include <cstdint>
-#include <Modularis_Core_C++/modules/system/Output.hpp>
-#include <Modularis_Core_C++/core/types/Sound_value.hpp>
+#include <Modularis_Core_C++/system/modules/Output.hpp>
+#include <Modularis_Core_C++/system/types/Sound_value.hpp>
 #include <Modularis_Core_C++/ports/Sound.hpp>
 #include <cstdlib>
 

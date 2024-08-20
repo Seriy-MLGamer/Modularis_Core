@@ -14,45 +14,53 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/modules/system/Module.hpp>
+#include <Modularis_Core_C++/system/modules/Module.hpp>
 
 #include <Modularis_Core_C++/ports/controllers/Real_controller.hpp>
 #include <Modularis_Core_C++/ports/controllers/Integer_controller.hpp>
 #include <Modularis_Core_C++/ports/Note.hpp>
 #include <cstdint>
+#include <cstdlib>
 
 namespace MDLRS
 {
-	struct Sequence;
+	struct Any_pattern;
+	struct Patterns_sequence_data;
+	struct Pattern_data;
 	struct Modularis;
 
 	struct Sequencer: Module
 	{
 		Real_controller BPM;
 		Integer_controller LPB;
-		Integer_controller cursor_position;
+		Real_controller cursor_position;
+		Integer_controller loop;
 		Integer_controller play;
 		Note output;
-		Sequence *tracks;
+		Any_pattern ***tracks;
+		Patterns_sequence_data *tracks_data;
+		Pattern_data *patterns_data;
 		uint32_t tracks_count;
-		uint32_t length;
+		uint32_t sequences_count;
 		uint32_t time;
 		bool is_playing;
 		bool is_position_changed;
 
 		Sequencer(Modularis &project);
-		inline void set_position(uint32_t cursor_position);
-		void process();
+		void add(Any_pattern ***tracks, uint32_t tracks_count);
+		inline void set_position(float cursor_position);
+		void on_update();
 		inline ~Sequencer();
 	};
-	void Sequencer::set_position(uint32_t cursor_position)
+	void Sequencer::set_position(float cursor_position)
 	{
 		this->cursor_position.value=cursor_position;
-		is_playing=false;
 		is_position_changed=true;
 	}
 	Sequencer::~Sequencer()
 	{
 		disconnect();
+		if (tracks_data) free(tracks_data);
+		if (patterns_data) free(patterns_data);
 	}
 }

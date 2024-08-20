@@ -15,21 +15,21 @@ You should have received a copy of the GNU General Public License along with Mod
 #include <Modularis_Core/ports/Sound.h>
 
 #include <stdint.h>
-#include <Modularis_Core/ports/system/Connection.h>
+#include <Modularis_Core/system/ports/Connection.h>
 
 static struct MDLRS_Port_f f=
 {
-	(int (*)(void *, MDLRS_Port_base *))MDLRS_Port_connect,
+	(int (*)(void *, MDLRS_Any_port *))MDLRS_Port_connect,
 	(int (*)(void *, MDLRS_Port *))MDLRS_Port_connect_port,
 	(int (*)(void *, MDLRS_Ports_folder *))MDLRS_Port_connect_folder,
 	(int (*)(void *))MDLRS_Port_disconnect,
-	(int (*)(void *, MDLRS_Port_base *))MDLRS_Port_disconnect_from_port,
+	(int (*)(void *, MDLRS_Any_port *))MDLRS_Port_disconnect_from_port,
 	(int (*)(void *, MDLRS_Port *))MDLRS_Port_disconnect_port,
 	(int (*)(void *, MDLRS_Ports_folder *))MDLRS_Port_disconnect_folder,
 	(int (*)(void *))MDLRS_Port_disconnect_input,
 	(void (*)(void *))MDLRS_Port_update,
 	(void (*)(void *))MDLRS_Port_get_ready,
-	(void (*)(void *))MDLRS_Sound_process
+	(void (*)(void *))MDLRS_Sound_on_update
 };
 
 void MDLRS_Sound_new_body(MDLRS_Sound *self)
@@ -45,7 +45,7 @@ void MDLRS_Sound_new(MDLRS_Sound *self, MDLRS_Module *module)
 
 	self->frame=0;
 }
-void MDLRS_Sound_process(MDLRS_Sound *self)
+void MDLRS_Sound_on_update(MDLRS_Sound *self)
 {
 	self->frame=0;
 	for (uint32_t a=0; a!=self->connections_count; a++) self->frame+=((MDLRS_Sound *)self->connections[a].port)->frame;

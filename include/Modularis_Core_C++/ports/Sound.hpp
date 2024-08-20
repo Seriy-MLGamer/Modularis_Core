@@ -14,9 +14,9 @@ You should have received a copy of the GNU General Public License along with Mod
 
 #pragma once
 
-#include <Modularis_Core_C++/ports/system/Port.hpp>
+#include <Modularis_Core_C++/system/ports/Port.hpp>
 
-#include <Modularis_Core_C++/core/types/Sound_value.hpp>
+#include <Modularis_Core_C++/system/types/Sound_value.hpp>
 
 namespace MDLRS
 {
@@ -27,6 +27,6 @@ namespace MDLRS
 		Sound_value frame;
 
 		Sound(Module *module);
-		void process();
+		void on_update();
 	};
 }

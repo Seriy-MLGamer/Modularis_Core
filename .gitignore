@@ -1,5 +1,7 @@
 out
 test/modularis-test
+__pycache__
+*.html
 *.o
 *.a
 *.so

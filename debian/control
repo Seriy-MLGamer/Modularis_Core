@@ -3,12 +3,12 @@ Maintainer: Серый MLGamer <Seriy-MLGamer@yandex.ru>
 Section: libs
 Priority: optional
 Standards-Version: 0.0.0
-Build-Depends: debhelper-compat (= 13), cmake, gcc
-Vcs-Git: https://github.com/Seriy-MLGamer/Modularis_Core.git
-Vcs-Browser: https://github.com/Seriy-MLGamer/Modularis_Core
-#Description-ru: Каркас модульного синтеза звука Модулярис Ядро
+Build-Depends: debhelper-compat (= 13), python3:any
+Homepage: https://gitverse.ru/Seriy_MLGamer/Modularis_Core
+Vcs-Git: https://gitverse.ru/Seriy_MLGamer/Modularis_Core.git
+Vcs-Browser: https://gitverse.ru/Seriy_MLGamer/Modularis_Core
 Description: Modularis Core modular sound synthesis framework
- This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. Modularis free modular DAW is based on it. Framework is fully crossplatform between mobile and desktop devices.
+ This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. Modularis free modular DAW is based on it. Framework is fully crossplatform between mobile and desktop devices, supports various programming languages.
  .
  Framework essence
    * Freedom
@@ -30,12 +30,26 @@ Description: Modularis Core modular sound synthesis framework
 
 Package: libmodularis0
 Architecture: any
-Depends: libstdc++6
+Depends: libc6
 Description: ${source:Synopsis}
+ ${source:Extended-Description}
+ .
+ This package provides runtime shared library of the framework.
 
 Package: libmodularis-dev
-Architecture: all
+Architecture: any
 Section: libdevel
-Depends: libmodularis0
-#Description-ru: ${source:Synopsis} - файлы разработки
+Depends: libmodularis0 (= ${binary:Version})
 Description: ${source:Synopsis} - development files
+ ${source:Extended-Description}
+ .
+ This package provides files for software development on the framework.
+
+Package: libmodularis-cpp-dev
+Architecture: any
+Section: libdevel
+Depends: libmodularis0 (= ${binary:Version}), libmodularis-dev (= ${binary:Version})
+Description: Modularis Core C++ - development files for C++
+ ${source:Extended-Description}
+ .
+ This package provides a C++ language binding to Modularis Core library written in C for software development in C++ language.

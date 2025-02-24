@@ -1,9 +1,9 @@
 <!--
-(C) 2022-2024 Серый MLGamer. All freedoms preserved.
+(C) 2022-2025 Серый MLGamer. All freedoms preserved.
 Дзен: <https://dzen.ru/seriy_mlgamer>
 SoundCloud: <https://soundcloud.com/seriy_mlgamer>
 YouTube: <https://www.youtube.com/@Seriy_MLGamer>
-GitHub: <https://github.com/Seriy-MLGamer>
+GitVerse: <https://gitverse.ru/Seriy_MLGamer>
 E-mail: <Seriy-MLGamer@yandex.ru>
 
 This file is free documentation: you can redistribute it and/or modify it under the terms of the Creative Commons Attribution-ShareAlike 4.0 International license: <https://creativecommons.org/licenses/by-sa/4.0/>.
@@ -14,7 +14,7 @@ This file is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 ![Modularis Core full logo](share/logo%20en_US.svg)
 
-This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. [Modularis](https://github.com/Seriy-MLGamer/Modularis) free modular DAW is based on it. Framework is ***fully* crossplatform** between mobile and desktop devices, supports various programming languages.
+This is a free (as in freedom) modular synthesis framework for creation of free digital audio workstations (DAW) and other free programs. [Modularis](https://gitverse.ru/Seriy_MLGamer/Modularis) free modular DAW is based on it. Framework is ***fully* crossplatform** between mobile and desktop devices, supports various programming languages.
 
 ## Framework essence
 
@@ -148,51 +148,38 @@ Now you know about the framework features at this moment. It is time to test the
 
 ## The Guide for Building, Packaging and Testing
 
+I've migrated this project from CMake build system to my own enhanced, advanced, innovative build system [MakePy](https://gitverse.ru/Seriy_MLGamer/MakePy/tag/0.0.0).
+
 ### Dependencies
 
 Before starting the following procedures it is required to install these build dependencies:
 
-  * CMake
+  * Python 3
 
 #### GNU/Linux
 
-  * GCC (recommended; Clang work wasn't tested);
-  * Make (or similar program, if it works);
+  * GCC
+  * `debhelper` package (if you want to pack ".deb" packages)
 
 #### Windows
 
-  * mingw32-w64 GCC (recommended; Visual Studio compiler work wasn't tested);
-  * mingw32-w64 Make (or similar program, if it works);
+  * mingw-w64 GCC (including tools `dlltool` and `gendef`)
 
 ### Configuring
 
-Before starting the following procedures you can configure them in "configuration.cmake" file. Configuring tips are in the file.
-
-Then generate the build file using these commands:
-
-#### Bash
-
-	$ mkdir out
-	$ cd out
-	$ cmake .. -G "Unix Makefiles"
-
-#### CMD
-
-	>mkdir out
-	>cd out
-	>cmake .. -G "MinGW Makefiles"
+Before starting the following procedures you can configure them in "configuration.py" file. Configuring tips are in the file.
 
 ### Building
 
-It is done by this command:
+It is done by one command:
 
 #### Bash
 
-	$ make
+	$ ./make.py
 
 #### CMD
 
-	>mingw32-make
+	>python make.py
 
 ### Installation
 
@@ -200,35 +187,53 @@ This command will install the framework:
 
 #### Bash
 
-	$ make install
+	$ sudo ./make.py install
 
 #### CMD
 
-	>mingw32-make install
+As administrator:
 
-### Uninstallation
+	>python make.py install
 
-This command will uninstall the framework from the installation folder:
+### Cleanup
+
+This command will clean working folder from built files:
 
 #### Bash
 
-	$ make uninstall
+	$ ./make.py clean
 
 #### CMD
 
-	>mingw32-make uninstall
+	>python make.py clean
+
+### Removal
+
+This command will remove the framework from the installation folder:
+
+#### Bash
+
+	$ sudo ./make.py remove
+
+#### CMD
+
+As administrator:
+
+	>python make.py remove
 
 ### Packaging
 
-Packaging is done using CPack utility that is the part of CMake. In order to make package files have right rights in GNU/Linux it is recommended to do packaging as the superuser:
+Packaging of archives or packages is also done by this single command:
 
 #### Bash
 
-	$ sudo cpack
+	$ ./make.py pack
 
 #### CMD
 
-	>cpack
+	>python make.py pack
+
+Simple!
 
 ### Testing
 
@@ -236,7 +241,7 @@ After the procedures above you can test the framework by building and running th
 
 ![The player](share/player.png)
 
-First of all, install the framework (see Installation and also [Releases](https://github.com/Seriy-MLGamer/Modularis_Core/releases) section at GitHub). Then install SDL2, SDL2_image and SDL2_ttf libraries. Your PC must support OpenGL no earlier than version 2.0. After that run this command in "test" folder, if you want to test the player with GUI:
+First of all, install the framework (see Installation and also [Релизы](https://gitverse.ru/Seriy_MLGamer/Modularis_Core/releases) section at GitVerse). Then install SDL2, SDL2_image and SDL2_ttf libraries. Your PC must support OpenGL no earlier than version 2.0. After that run this command in "test" folder, if you want to test the player with GUI:
 
 #### Bash
 
@@ -246,7 +251,7 @@ First of all, install the framework (see Installation and also [Releases](https:
 
 	>test
 
-Or run this command, if you want to test the player in console mode. It doesn't require neither SDL2_image and SDL2_ttf libraries nor OpenGL support:
+Or run this command if you want to test the player in console mode. It doesn't require neither SDL2_image and SDL2_ttf libraries nor OpenGL support:
 
 #### Bash
 

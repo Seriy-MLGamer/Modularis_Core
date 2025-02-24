@@ -1,8 +1,8 @@
-#(C) 2023 Серый MLGamer. All freedoms preserved.
+#(C) 2023, 2025 Серый MLGamer. All freedoms preserved.
 #Дзен: <https://dzen.ru/seriy_mlgamer>
 #SoundCloud: <https://soundcloud.com/seriy_mlgamer>
 #YouTube: <https://www.youtube.com/@Seriy_MLGamer>
-#GitHub: <https://github.com/Seriy-MLGamer>
+#GitVerse: <https://gitverse.ru/Seriy_MLGamer>
 #E-mail: <Seriy-MLGamer@yandex.ru>
 #
 #This file is part of Modularis Core.
@@ -15,27 +15,25 @@
 #  * host - for host system default signature;
 #  * GNU/Linux:
 #      - x86_64-linux-gnu;
-#      - i386-linux-gnu;
 #      - i686-linux-gnu;
+#      - i386-linux-gnu;
 #      - aarch64-linux-gnu;
-#      - arm-linux-gnu;
-#      - arm-linux-gnueabi;
 #      - arm-linux-gnueabihf;
+#      - arm-linux-gnueabi;
 #  * Windows:
 #      - x86_64-w64-mingw32;
-#      - i686-w64-mingw32.
-set(BUILD_TARGET host)
-#Target type of package CPack will create from build.
+#      - i686-w64-mingw32;
+#      - aarch64-w64-mingw32.
+BUILD_TARGET="host"
+#Target type of package MakePy will create from build.
 #Possible values:
 #  * host - for host system default package type (tar.gz for GNU and zip for Windows);
 #  * tar.gz;
+#  * tar.bz2;
+#  * tar.xz;
+#  * tar;
 #  * zip;
 #  * deb.
-set(PACKAGE_TYPE host)
-#The C/C++ compiler.
-#Possible values:
-#  * GCC.
-#Comment the line below for a host default compiler.
-set(COMPILER GCC)
-set(GNU_INSTALLATION_FOLDER /usr/local)
-set(WINDOWS_INSTALLATION_FOLDER "C:/Program Files/Modularis Core")
+PACKAGE_TYPE="host"
+GNU_INSTALLATION_FOLDER="/usr/local"
+WINDOWS_INSTALLATION_FOLDER="C:/Program Files/Modularis Core"

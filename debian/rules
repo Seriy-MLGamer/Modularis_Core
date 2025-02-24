@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+script=./make.py
+path=debian/tmp/usr
+flags=-DPACKAGE_TYPE=deb
+
+command=$(script) --pack=$(path) $(flags) $(FLAGS)
+
+ifneq ($(PACKAGE),)
+binary:
+	dh binary -p$(PACKAGE)
+	$(command) remove
+override_dh_builddeb:
+	dpkg-deb --build debian/$(PACKAGE) "$(OUT)"
+else
+binary:
+	dh binary
+	$(command) remove
+endif
+%:
+	dh $@
+override_dh_auto_clean:
+	$(command) clean
+override_dh_auto_install:
+	$(command) install $(PACKAGE)
+#Uncomment targets below to get crossplatform crosscompilation without errors. Substvars ${shlibs:<dependency field>} won't work. You'll also probably need to manually create "shlibs" file.
+override_dh_dwz:
+override_dh_strip:
+override_dh_shlibdeps:
